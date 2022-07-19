@@ -1,25 +1,42 @@
-let income = 0;
-let expense = 0;
-let balance;
-function addStorage() {
-    var text = document.getElementById("text").value;
-    var amount = document.getElementById("amount").value
-    localStorage.setItem(text, amount);
-    //console.log(JSON.parse(localStorage.getItem(text,amount)));
-    var display = document.createElement('div');
-    display.setAttribute("id", "list1");
-    console.log(display);
-    document.getElementById('list').appendChild(display).innerHTML = text + "&nbsp&nbsp&nbsp&nbsp" + amount;
-    document.getElementById("list").style.color = "#fff";
-    if ((Math.sign(amount)) == 1) {
-        income = Number(income) + Number(amount);
-        document.getElementById('money-plus').textContent = "+$" + income;
+function addTransaction()
+{
+    var costing = 
+    {
+        id: localStorage.length,
+        name: document.getElementById("text").value,
+        amount: document.getElementById("amount").value
+    };
+    if(costing.name && costing.amount)
+    {
+        localStorage.setItem(costing.id, JSON.stringify(costing));
     }
-    else {
-        expense = Number(expense) + Number(amount);
-        document.getElementById('money-minus').textContent = "$" + expense;
-    }
-    
-    balance = Number(income) + Number(expense);
-    document.getElementById('balance').textContent = "$" + balance;
 }
+
+var positive = 0.00, negative = 0.00, balance = 0.00;
+
+for (let i = localStorage.length ; i>0; i--) 
+{
+    var item = JSON.parse(localStorage.getItem(i-1));
+    var li = document.createElement("li");
+    if(item.amount<0)
+    {
+        li.classList.add("minus");
+        negative = negative + parseFloat(item.amount);
+        negative.toFixed(2);
+    }
+    else 
+    {
+        li.classList.add("plus");
+        positive = positive + parseFloat(item.amount);
+    }
+    var ul = document.getElementById("list");
+    ul.appendChild(li);
+    li.innerHTML = "<div>"+item.name+"</div> <div>"+item.amount+"</div>" ;
+}
+balance = negative + positive;
+negative = negative.toFixed(2);
+positive = positive.toFixed(2);
+balance = balance.toFixed(2);
+document.getElementById("balance").innerHTML = "$"+balance;
+document.getElementById("money-plus").innerHTML = "+$"+positive;
+document.getElementById("money-minus").innerHTML = "-$"+negative;
